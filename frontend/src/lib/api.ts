@@ -18,7 +18,16 @@ import type {
   MinimaxVoiceCloneOut,
 } from "./types";
 
+/** 生产环境（如 Vercel）填写后端公网根地址；本地开发留空，走 Vite proxy */
+const API_ORIGIN = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
+
+function apiUrl(path: string): string {
+  if (!path.startsWith("/")) return path;
+  return `${API_ORIGIN}${path}`;
+}
+
 async function request<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
+  const resolved = typeof input === "string" ? apiUrl(input) : input;
   // 只有非 multipart 请求才强制设 Content-Type；FormData / Blob / URLSearchParams 由浏览器自动处理
   const bodyType = Object.prototype.toString.call(init?.body);
   const isMultipart =
@@ -29,7 +38,7 @@ async function request<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
   if (!isMultipart && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
-  const res = await fetch(input, {
+  const res = await fetch(resolved, {
     ...init,
     headers,
   });
@@ -310,7 +319,7 @@ export const api = {
         }
       });
       xhr.addEventListener("error", () => reject(new Error("网络错误，上传失败")));
-      xhr.open("POST", "/api/videos/upload");
+      xhr.open("POST", apiUrl("/api/videos/upload"));
       xhr.send(formData);
     }),
 
@@ -319,7 +328,7 @@ export const api = {
 };
 
 export function fileUrl(path: string): string {
-  return `/api/assets/file?path=${encodeURIComponent(path)}`;
+  return apiUrl(`/api/assets/file?path=${encodeURIComponent(path)}`);
 }
 
 export function formatDuration(seconds: number): string {
