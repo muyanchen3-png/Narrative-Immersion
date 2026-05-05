@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "mcp__MiniMax__web_search",
+      "mcp__Claude_in_Chrome__switch_browser",
+      "mcp__Claude_in_Chrome__navigate",
+      "mcp__Claude_in_Chrome__list_connected_browsers",
+      "WebFetch(domain:minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com)",
+      "mcp__MiniMax__understand_image"
+    ]
+  }
+}
